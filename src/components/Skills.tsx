@@ -3,44 +3,67 @@
 import { motion, useInView } from "motion/react";
 import { useRef, useState } from "react";
 
+type Tier = "expert" | "proficient" | "familiar";
+
+const tierConfig: Record<Tier, { label: string; description: string; chipClass: string; dot: string }> = {
+  expert: {
+    label: "Expert",
+    description: "Shipped to production",
+    chipClass: "text-blue-300 border-princeton-blue/50 bg-princeton-blue/15 hover:bg-princeton-blue/25",
+    dot: "bg-princeton-blue",
+  },
+  proficient: {
+    label: "Proficient",
+    description: "Used in real projects",
+    chipClass: "text-gray-200 border-white/20 bg-white/8 hover:bg-white/12",
+    dot: "bg-blue-400",
+  },
+  familiar: {
+    label: "Familiar",
+    description: "Can pick up quickly",
+    chipClass: "text-gray-500 border-white/10 bg-white/3 hover:bg-white/8 hover:text-gray-400",
+    dot: "bg-gray-600",
+  },
+};
+
 const skillCategories = [
   {
     name: "Languages",
     icon: "💻",
     skills: [
-      { name: "Python", level: 95, description: "Primary language for AI/ML work" },
-      { name: "JavaScript", level: 85, description: "Web development & Node.js" },
-      { name: "C++", level: 80, description: "Quantitative systems & performance" },
-      { name: "Java", level: 75, description: "Data structures & algorithms" },
-      { name: "C#", level: 75, description: "Unity game development" },
-      { name: "SQL", level: 70, description: "Database queries & analytics" },
-      { name: "R", level: 65, description: "Statistical analysis" },
+      { name: "Python", tier: "expert" as Tier, description: "Primary language for AI/ML work" },
+      { name: "JavaScript", tier: "expert" as Tier, description: "Web development & Node.js" },
+      { name: "C++", tier: "proficient" as Tier, description: "Quantitative systems & performance" },
+      { name: "Java", tier: "proficient" as Tier, description: "Data structures & algorithms" },
+      { name: "C#", tier: "proficient" as Tier, description: "Unity game development" },
+      { name: "SQL", tier: "proficient" as Tier, description: "Database queries & analytics" },
+      { name: "R", tier: "familiar" as Tier, description: "Statistical analysis" },
     ],
   },
   {
     name: "Frameworks & Libraries",
     icon: "🛠️",
     skills: [
-      { name: "PyTorch", level: 90, description: "Deep learning models" },
-      { name: "NVIDIA NeMo", level: 85, description: "LLM training & deployment" },
-      { name: "React.js", level: 80, description: "Frontend development" },
-      { name: "Unity", level: 75, description: "Game development" },
-      { name: "NumPy/Pandas", level: 90, description: "Data manipulation" },
-      { name: "NetworkX", level: 80, description: "Graph analysis" },
-      { name: "OpenAPI", level: 70, description: "API specifications" },
+      { name: "PyTorch", tier: "expert" as Tier, description: "Deep learning models" },
+      { name: "NumPy / Pandas", tier: "expert" as Tier, description: "Data manipulation & analysis" },
+      { name: "NVIDIA NeMo", tier: "proficient" as Tier, description: "LLM training & deployment" },
+      { name: "React.js", tier: "proficient" as Tier, description: "Frontend development" },
+      { name: "NetworkX", tier: "proficient" as Tier, description: "Graph analysis" },
+      { name: "Unity", tier: "familiar" as Tier, description: "Game development" },
+      { name: "OpenAPI", tier: "familiar" as Tier, description: "API specifications" },
     ],
   },
   {
     name: "Tools & Platforms",
     icon: "⚙️",
     skills: [
-      { name: "AWS SageMaker", level: 85, description: "ML model deployment" },
-      { name: "Git", level: 90, description: "Version control" },
-      { name: "Docker", level: 75, description: "Containerization" },
-      { name: "VS Code", level: 95, description: "Primary IDE" },
-      { name: "Claude Code", level: 90, description: "AI-assisted development" },
-      { name: "Azure", level: 70, description: "Cloud services" },
-      { name: "Selenium", level: 70, description: "Automated testing" },
+      { name: "Git", tier: "expert" as Tier, description: "Version control" },
+      { name: "AWS SageMaker", tier: "expert" as Tier, description: "ML model deployment" },
+      { name: "Claude Code", tier: "expert" as Tier, description: "AI-assisted development" },
+      { name: "Docker", tier: "proficient" as Tier, description: "Containerization" },
+      { name: "VS Code", tier: "proficient" as Tier, description: "Primary IDE" },
+      { name: "Azure", tier: "familiar" as Tier, description: "Cloud services" },
+      { name: "Selenium", tier: "familiar" as Tier, description: "Automated testing" },
     ],
   },
 ];
@@ -51,9 +74,11 @@ export default function Skills() {
   const [activeCategory, setActiveCategory] = useState(0);
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
+  const currentSkills = skillCategories[activeCategory].skills;
+  const tiers: Tier[] = ["expert", "proficient", "familiar"];
+
   return (
     <section id="skills" className="py-32 relative">
-      {/* Background */}
       <div className="absolute inset-0 bg-dark-bg" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,58 +127,72 @@ export default function Skills() {
           ))}
         </motion.div>
 
-        {/* Skills Grid */}
+        {/* Tiered Skills Grid */}
         <motion.div
           key={activeCategory}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid sm:grid-cols-3 gap-6"
         >
-          {skillCategories[activeCategory].skills.map((skill, index) => (
-            <motion.div
-              key={skill.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-              className="relative"
-              onMouseEnter={() => setHoveredSkill(skill.name)}
-              onMouseLeave={() => setHoveredSkill(null)}
-            >
-              <div className="glass rounded-xl p-5 h-full hover:border-princeton-blue/30 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-white font-medium">{skill.name}</h4>
-                  <span className="text-sm text-princeton-blue font-mono">
-                    {skill.level}%
+          {tiers.map((tier, tierIndex) => {
+            const config = tierConfig[tier];
+            const tierSkills = currentSkills.filter((s) => s.tier === tier);
+            if (tierSkills.length === 0) return null;
+
+            return (
+              <motion.div
+                key={tier}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: tierIndex * 0.1 }}
+                className="glass rounded-2xl p-5"
+              >
+                {/* Tier Header */}
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/10">
+                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${config.dot}`} />
+                  <span className="text-white font-semibold text-sm">{config.label}</span>
+                  <span className="text-gray-600 text-xs ml-auto hidden lg:block">
+                    {config.description}
                   </span>
                 </div>
 
-                {/* Progress bar */}
-                <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-princeton-blue to-accent-orange rounded-full"
-                    initial={{ width: 0 }}
-                    animate={isInView ? { width: `${skill.level}%` } : {}}
-                    transition={{ duration: 1, delay: 0.5 + index * 0.05 }}
-                  />
-                </div>
+                {/* Skill Chips */}
+                <div className="flex flex-wrap gap-2">
+                  {tierSkills.map((skill) => (
+                    <div
+                      key={skill.name}
+                      className="relative"
+                      onMouseEnter={() => setHoveredSkill(skill.name)}
+                      onMouseLeave={() => setHoveredSkill(null)}
+                    >
+                      <motion.span
+                        className={`inline-flex items-center px-3 py-1.5 rounded-lg border text-sm font-medium cursor-default transition-all ${config.chipClass}`}
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        {skill.name}
+                      </motion.span>
 
-                {/* Tooltip */}
-                {hoveredSkill === skill.name && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-3 text-sm text-gray-400"
-                  >
-                    {skill.description}
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          ))}
+                      {/* Tooltip */}
+                      {hoveredSkill === skill.name && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-dark-surface border border-white/10 rounded-lg text-xs text-gray-300 whitespace-nowrap z-10 pointer-events-none shadow-xl"
+                        >
+                          {skill.description}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-white/10" />
+                        </motion.div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
 
-        {/* Quick Skills Cloud */}
+        {/* Also Familiar With */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}

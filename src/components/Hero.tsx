@@ -23,16 +23,21 @@ export default function Hero() {
           priority
           quality={75}
         />
-        <div className="absolute inset-0 bg-black/40" />
+        {/* Lighter overlay so the nebula breathes */}
+        <div className="absolute inset-0 bg-black/20" />
+        {/* Princeton blue gradient at the bottom for smooth transition */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-dark-bg" />
+        {/* Subtle blue atmospheric tint */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-princeton-blue/20 via-transparent to-transparent" />
       </div>
 
-      {/* Grid pattern overlay */}
+      {/* Fine grid pattern overlay */}
       <div
-        className="absolute inset-0 opacity-[0.02]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)`,
-          backgroundSize: "100px 100px",
+          backgroundImage: `linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
         }}
       />
 

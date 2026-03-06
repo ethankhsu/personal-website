@@ -6,6 +6,9 @@ import { useRef } from "react";
 const obsessions = [
   {
     category: "Anime",
+    accent: "from-violet-500/20 to-purple-900/10",
+    borderAccent: "border-violet-500/30",
+    labelColor: "text-violet-400",
     items: [
       {
         title: "Frieren",
@@ -26,6 +29,9 @@ const obsessions = [
   },
   {
     category: "Tech",
+    accent: "from-princeton-blue/20 to-blue-900/10",
+    borderAccent: "border-princeton-blue/30",
+    labelColor: "text-blue-400",
     items: [
       {
         title: "Agentic AI",
@@ -34,18 +40,21 @@ const obsessions = [
       },
       {
         title: "Quantum Computing",
-        subtitle: "Exploring the next frontier of computation",
+        subtitle: "Exploring the next frontier",
         emoji: "⚛️",
       },
       {
         title: "DeFi Expansion",
-        subtitle: "Decentralized finance innovation",
+        subtitle: "Decentralized finance",
         emoji: "💰",
       },
     ],
   },
   {
     category: "Hobbies",
+    accent: "from-accent-orange/15 to-amber-900/10",
+    borderAccent: "border-accent-orange/30",
+    labelColor: "text-accent-orange",
     items: [
       {
         title: "Video Editing",
@@ -59,17 +68,20 @@ const obsessions = [
       },
       {
         title: "Golf",
-        subtitle: "The perfect transition sport after baseball",
+        subtitle: "The perfect transition sport",
         emoji: "⛳",
       },
     ],
   },
   {
     category: "Music Artists",
+    accent: "from-emerald-500/15 to-green-900/10",
+    borderAccent: "border-emerald-500/30",
+    labelColor: "text-emerald-400",
     items: [
       {
         title: "The Kid Laroi",
-        subtitle: "My #1 artist on Spotify the last 5 years",
+        subtitle: "My #1 on Spotify, 5 years running",
         image: "/images/obsessions/KIDLAROI.jpg",
       },
       {
@@ -79,7 +91,7 @@ const obsessions = [
       },
       {
         title: "Billie Eilish",
-        subtitle: "The most talented artist right now",
+        subtitle: "Most talented artist right now",
         emoji: "🎧",
       },
     ],
@@ -92,7 +104,6 @@ export default function Obsessions() {
 
   return (
     <section id="obsessions" className="py-32 relative overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 bg-dark-bg" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,7 +113,7 @@ export default function Obsessions() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
           <span className="text-princeton-blue font-medium uppercase tracking-wider text-sm">
             Currently Into
@@ -116,79 +127,66 @@ export default function Obsessions() {
           </p>
         </motion.div>
 
-        {/* Obsessions Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* Magazine-style category rows */}
+        <div className="space-y-10">
           {obsessions.map((category, categoryIndex) => (
             <motion.div
               key={category.category}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: categoryIndex * 0.1 }}
+              initial={{ opacity: 0, x: -30 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: categoryIndex * 0.12 }}
+              className="flex gap-6 items-stretch"
             >
-              {/* Category Header */}
-              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <span className="w-8 h-px bg-gray-700" />
-                {category.category}
-              </h3>
+              {/* Vertical category label */}
+              <div className="flex-shrink-0 flex flex-col items-center justify-center w-10">
+                <div
+                  className={`text-xs uppercase tracking-[0.25em] font-semibold ${category.labelColor} whitespace-nowrap`}
+                  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                >
+                  {category.category}
+                </div>
+                <div className={`w-px flex-1 mt-3 bg-gradient-to-b ${category.borderAccent.replace("border-", "from-").replace("/30", "/40")} to-transparent`} />
+              </div>
 
-              {/* Items */}
-              <div className="space-y-4">
+              {/* Items — horizontal scroll on mobile, wrap on desktop */}
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {category.items.map((item, itemIndex) => (
                   <motion.div
                     key={item.title}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{
                       duration: 0.4,
-                      delay: categoryIndex * 0.1 + itemIndex * 0.1,
+                      delay: categoryIndex * 0.12 + itemIndex * 0.07,
                     }}
-                    whileHover={{ x: 5 }}
-                    className="glass rounded-xl p-4 flex items-center gap-4 cursor-default hover:border-white/20 transition-all"
+                    whileHover={{ y: -3 }}
+                    className={`glass rounded-2xl overflow-hidden border ${category.borderAccent} transition-all hover:shadow-lg group cursor-default`}
                   >
-                    {/* Icon - Image or Emoji */}
-                    <div
-                      className="w-14 h-14 rounded-xl bg-dark-surface border border-white/10 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden"
-                    >
-                      {"image" in item ? (
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        item.emoji
-                      )}
-                    </div>
+                    {/* Card interior */}
+                    <div className={`bg-gradient-to-br ${category.accent} p-4 flex items-center gap-3`}>
+                      {/* Icon */}
+                      <div className="w-12 h-12 rounded-xl bg-dark-surface/80 border border-white/10 flex items-center justify-center text-xl flex-shrink-0 overflow-hidden">
+                        {"image" in item ? (
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          item.emoji
+                        )}
+                      </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-white font-medium truncate">
-                        {item.title}
-                      </h4>
-                      <p className="text-gray-400 text-sm truncate">
-                        {item.subtitle}
-                      </p>
+                      {/* Text */}
+                      <div className="min-w-0">
+                        <h4 className="text-white font-semibold text-sm leading-tight truncate group-hover:text-white transition-colors">
+                          {item.title}
+                        </h4>
+                        <p className="text-gray-400 text-xs mt-0.5 truncate leading-snug">
+                          {item.subtitle}
+                        </p>
+                      </div>
                     </div>
-
-                    {/* Arrow */}
-                    <motion.div
-                      className="text-gray-600"
-                      whileHover={{ x: 3 }}
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </motion.div>
                   </motion.div>
                 ))}
               </div>
@@ -201,9 +199,9 @@ export default function Obsessions() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-center text-gray-500 text-sm mt-12"
+          className="text-center text-gray-600 text-xs mt-14"
         >
-          Last updated: November 2025
+          Last updated: March 2026
         </motion.p>
       </div>
     </section>
